@@ -60,10 +60,11 @@ class QuestionIndexViewTests(TestCase):
 
     def test_five_most_recent_questions(self):
         for i in range(1, 8):
-            Question.objects.create(
+            question = Question.objects.create(
                 question_text=f"Question {i}",
                 pub_date=timezone.now() - datetime.timedelta(days=i),
             )
+            question.choice_set.create(choice_text="A choice")
 
         response = self.client.get("/polls/")
 
@@ -81,6 +82,7 @@ class QuestionIndexViewTests(TestCase):
         ]
 
         self.assertEqual(question_texts, expected_question_texts)
+
     def test_future_question(self):
         future_date = timezone.now() + datetime.timedelta(days=1)
 
@@ -143,3 +145,68 @@ class QuestionResultsViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, past_question.question_text)
+
+class VoteViewTests(TestCase):
+    def test_future_question_cannot_be_voted_on(self):
+        future_question=Question.objects.create(
+            question_text="Future question",
+            pub_date=timezone.now() + datetime.timedelta(days=3),
+        )
+        choice=future_question.choice_set.create(
+            choice_text="A future choice",
+        )
+
+        response =self.client.post(
+            reverse("polls:vote", args=(future_question.id,)),
+        )
+        self.assertEqual(response.status_code, 404)
+        choice.refresh_from_db()
+        self.assertEqual(choice.votes, 0)
+
+    def test_non_numeric_choice_id_does_not_crash(self):
+        question=Question.objects.create(
+            question_text="Test question",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+        question.choice_set.create(choice_text="Python")
+        response=self.client.post(
+            reverse("polls:vote", args=(question.id,)),
+            {"choice": "abc"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "You didn&#x27;t select a choice.")
+
+    def test_successful_vote_increment_count(self):
+        question=Question.objects.create(
+            question_text="Test voting",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+        choice=question.choice_set.create(
+            choice_text="Python",
+        )
+        response=self.client.post(
+            reverse("polls:vote", args=(question.id,)),
+            {"choice": choice.id},
+        )
+        self.assertRedirects(
+            response,
+            reverse("polls:results", args=(question.id,)),
+        )
+        choice.refresh_from_db()
+        self.assertEqual(choice.votes, 1)
+    def test_get_request_does_not_record_vote(self):
+        question=Question.objects.create(
+            question_text="Test GET request.",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+        choice=question.choice_set.create(
+            choice_text="Python",
+        )
+        response=self.client.get(
+            reverse("polls:vote", args=(question.id,)),
+        )
+
+        self.assertEqual(response.status_code, 405)
+        choice.refresh_from_db()
+        self.assertEqual(choice.votes, 0)
