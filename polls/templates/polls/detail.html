@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,29 +12,33 @@
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
+    {% with choices=question.choice_set.all %}
+        {% if choices %}
+            <form action="{% url 'polls:vote' question.id %}" method="post">
+                {% csrf_token %}
 
-    <ul>
-        <form action="{% url 'polls:vote' question.id %}" method="post">
-            {% csrf_token %}
+                <ul>
+                    {% for choice in choices %}
+                        <li>
+                            <input
+                                type="radio"
+                                name="choice"
+                                id="choice{{ forloop.counter }}"
+                                value="{{ choice.id }}"
+                            >
+                            <label for="choice{{ forloop.counter }}">
+                                {{ choice.choice_text }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
 
-            {% for choice in question.choice_set.all %}
-                <input
-                    type="radio"
-                    name="choice"
-                    id="choice{{ forloop.counter }}"
-                    value="{{ choice.id }}"
-                >
-                <label for="choice{{ forloop.counter }}">
-                    {{ choice.choice_text }}
-                </label>
-                <br>
-            {% empty %}
-                <p> Noe choices are available</p>
-            {% endfor %}
-
-            <input type="submit" value="Vote">
-        </form>
-    </ul>
+                <input type="submit" value="Vote">
+            </form>
+        {% else %}
+            <p>No choices are available.</p>
+        {% endif %}
+    {% endwith %}
 
     <a href="{% url 'polls:index' %}">Back to questions</a>
 </body>

@@ -1,13 +1,10 @@
-li a{
-    color: white;
+li a {
+    color: #263b50;
 }
 
 body {
-    background: white url("images/background.jfif") no-repeat;
+    background: white url("images/background.jfif") no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
 }
-
-
-
-
-
-
