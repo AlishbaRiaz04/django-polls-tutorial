@@ -169,6 +169,7 @@ class QuestionResultsViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, past_question.question_text)
+        self.assertContains(response, f'href="{reverse("polls:index")}"')
 
     def test_question_without_choices_returns_404(self):
         question = Question.objects.create(
@@ -179,6 +180,7 @@ class QuestionResultsViewTests(TestCase):
         response = self.client.get(reverse("polls:results", args=(question.id,)))
 
         self.assertEqual(response.status_code, 404)
+        
 
 class VoteViewTests(TestCase):
     def test_future_question_cannot_be_voted_on(self):

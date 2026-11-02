@@ -8,35 +8,28 @@
     {% if error_message %}
         <p class="error-message"><strong>{{ error_message }}</strong></p>
     {% endif %}
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
 
-    {% with choices=question.choice_set.all %}
-        {% if choices %}
-            <form action="{% url 'polls:vote' question.id %}" method="post">
-                {% csrf_token %}
-
-                <ul class="choice-list">
-                    {% for choice in choices %}
-                        <li class="choice-item">
-                            <input
-                                type="radio"
-                                name="choice"
-                                id="choice{{ forloop.counter }}"
-                                value="{{ choice.id }}"
-                            >
-                            <label for="choice{{ forloop.counter }}">
-                                {{ choice.choice_text }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <button type="submit" class="vote-button">Vote</button>
-            </form>
-        {% else %}
-            <p>No choices are available</p>
-        {% endif %}
-    {% endwith %}
+        <ul class="choice-list">
+            {% for choice in question.choice_set.all %}
+                <li class="choice-item">
+                    <input
+                        type="radio"
+                        name="choice"
+                        id="choice{{ forloop.counter }}"
+                        value="{{ choice.id }}"
+                    >
+                    <label for="choice{{ forloop.counter }}">
+                        {{ choice.choice_text }}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="vote-button">Vote</button>
+    </form>
 
     <a class="back-link" href="{% url 'polls:index' %}">
-         ← Back to questions
+        ← Back to questions
     </a>
 {% endblock %}
