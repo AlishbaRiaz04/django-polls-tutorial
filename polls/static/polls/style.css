@@ -1,10 +1,154 @@
-li a {
+/* Page background */
+body {
+    background: white url("images/background.jpg") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
     color: #263b50;
 }
 
-body {
-    background: white url("images/background.jfif") no-repeat center center;
-    background-size: cover;
-    min-height: 100vh;
-    margin: 0;
+/* Main content container */
+.poll-container {
+    background-color: rgba(255, 255, 255, 0.92);
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 12px;
 }
+
+/* Page heading */
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Remove default list styling */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Individual poll questions */
+li {
+    background-color: #f1f5f9;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Question links */
+li a {
+    color: #263b50;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+/* Link hover effect */
+li a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+/* Voting choices */
+.choice-list {
+    margin-top: 20px;
+}
+
+.choice-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.choice-item input[type="radio"] {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+
+.choice-item label {
+    cursor: pointer;
+}
+
+/* Vote button */
+.vote-button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.vote-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Navigation link */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #263b50;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Voting error */
+.error-message {
+    color: #b91c1c;
+    background-color: #fee2e2;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+
+/* Results heading */
+.results-heading {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* Vote count results */
+.results-list {
+    margin-top: 20px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.result-item strong {
+    color: #2563eb;
+    white-space: nowrap;
+}
+
+/* Results navigation */
+.results-links {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.results-links a {
+    color: #263b50;
+    text-decoration: none;
+}
+
+.results-links a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
