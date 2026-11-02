@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Question, Choice
-from django.views import generic
-from django.utils import timezone
 from django.db.models import F
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views import generic
 from django.views.decorators.http import require_POST
+
+from .models import Choice, Question
 
 
 class IndexView(generic.ListView):
@@ -26,7 +27,10 @@ class DetailView(generic.DetailView):
     template_name = "polls/detail.html"
 
     def get_queryset(self):
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(
+            pub_date__lte=timezone.now(),
+            choice__isnull=False,
+        ).distinct()
 
 
 @require_POST
@@ -58,4 +62,7 @@ class ResultsView(generic.DetailView):
     template_name = "polls/results.html"
 
     def get_queryset(self):
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(
+            pub_date__lte=timezone.now(),
+            choice__isnull=False,
+        ).distinct()

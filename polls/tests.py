@@ -95,6 +95,28 @@ class QuestionIndexViewTests(TestCase):
             [],
         )
 
+    def test_questions_without_choices_are_excluded(self):
+        question_without_choices = Question.objects.create(
+            question_text="No choices",
+            pub_date=timezone.now() - datetime.timedelta(days=2),
+        )
+
+        question_with_choices = Question.objects.create(
+            question_text="Has choices",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+        question_with_choices.choice_set.create(choice_text="Python")
+        question_with_choices.choice_set.create(choice_text="Django")
+
+        response = self.client.get(reverse("polls:index"))
+
+        question_ids = [
+            question.id for question in response.context["latest_question_list"]
+        ]
+
+        self.assertNotIn(question_without_choices.id, question_ids)
+        self.assertEqual(question_ids.count(question_with_choices.id), 1)
+
 
 class QuestionDetailViewTests(TestCase):
     def test_future_question(self):
@@ -111,11 +133,21 @@ class QuestionDetailViewTests(TestCase):
             question_text="Past question",
             pub_date=timezone.now() - datetime.timedelta(days=5),
         )
+        past_question.choice_set.create(choice_text="Python")
 
         response = self.client.get(reverse("polls:detail", args=(past_question.id,)))
 
         self.assertContains(response, past_question.question_text)
 
+    def test_question_without_choices_returns_404(self):
+        question = Question.objects.create(
+            question_text="No choices",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+
+        response = self.client.get(reverse("polls:detail", args=(question.id,)))
+
+        self.assertEqual(response.status_code, 404)
 
 class QuestionResultsViewTests(TestCase):
     def test_future_question(self):
@@ -131,12 +163,22 @@ class QuestionResultsViewTests(TestCase):
             question_text="Past question",
             pub_date=timezone.now() - datetime.timedelta(days=5),
         )
+        past_question.choice_set.create(choice_text="Python")
 
         response = self.client.get(reverse("polls:results", args=(past_question.id,)))
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, past_question.question_text)
 
+    def test_question_without_choices_returns_404(self):
+        question = Question.objects.create(
+            question_text="No choices",
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+        )
+
+        response = self.client.get(reverse("polls:results", args=(question.id,)))
+
+        self.assertEqual(response.status_code, 404)
 
 class VoteViewTests(TestCase):
     def test_future_question_cannot_be_voted_on(self):

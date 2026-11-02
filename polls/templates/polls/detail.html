@@ -1,15 +1,12 @@
+{% extends "polls/base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Question Details</title>
-</head>
-<body>
+{% block title %}Vote on a Question{% endblock %}
+
+{% block content %}
     <h1>{{ question.question_text }}</h1>
 
     {% if error_message %}
-        <p><strong>{{ error_message }}</strong></p>
+        <p class="error-message"><strong>{{ error_message }}</strong></p>
     {% endif %}
 
     {% with choices=question.choice_set.all %}
@@ -17,9 +14,9 @@
             <form action="{% url 'polls:vote' question.id %}" method="post">
                 {% csrf_token %}
 
-                <ul>
+                <ul class="choice-list">
                     {% for choice in choices %}
-                        <li>
+                        <li class="choice-item">
                             <input
                                 type="radio"
                                 name="choice"
@@ -32,14 +29,14 @@
                         </li>
                     {% endfor %}
                 </ul>
-
-                <input type="submit" value="Vote">
+                <button type="submit" class="vote-button">Vote</button>
             </form>
         {% else %}
-            <p>No choices are available.</p>
+            <p>No choices are available</p>
         {% endif %}
     {% endwith %}
 
-    <a href="{% url 'polls:index' %}">Back to questions</a>
-</body>
-</html>
+    <a class="back-link" href="{% url 'polls:index' %}">
+         ← Back to questions
+    </a>
+{% endblock %}
