@@ -55,24 +55,20 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-### 4. Configure the development secret key
+### 4. Secret key configuration
 
-Set `DJANGO_SECRET_KEY` in your terminal before running Django.
-
+For local development, the project uses a fallback secret key if `DJANGO_SECRET_KEY` is not set. You can optionally provide your own development key through an environment variable.
 **Windows PowerShell:**
-
 ```powershell
-$env:DJANGO_SECRET_KEY = "replace-with-a-local-development-key"
+$env:DJANGO_SECRET_KEY = "your-local-development-key"
 ```
 
 **macOS/Linux:**
-
 ```bash
-export DJANGO_SECRET_KEY="replace-with-a-local-development-key"
+export DJANGO_SECRET_KEY="your-local-development-key"
 ```
 
-Use a private development key. Do not use this example value in production.
-
+**Production:** Always configure a secure, private `DJANGO_SECRET_KEY` through your deployment environment. Never use the development fallback in production.
 ### 5. Apply database migrations
 
 ```bash
@@ -92,7 +88,6 @@ Follow the prompts to create the account.
 ```bash
 python manage.py runserver
 ```
-
 Open the following URLs in your browser:
 
 - Polls: http://127.0.0.1:8000/polls/
@@ -117,24 +112,31 @@ django-polls-tutorial/
 │   ├── urls.py
 │   ├── asgi.py
 │   └── wsgi.py
-├── polls/
-│   ├── migrations/
-│   ├── static/
-│   ├── templates/
-│   ├── admin.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-└── templates/
-    └── admin/
+└── polls/
+    ├── migrations/
+    │   └── 0004_alter_question_pub_date.py
+    ├── static/
+    │   └── polls/
+    │       ├── style.css
+    │       └── images/
+    │           └── background.jpg
+    ├── templates/
+    │   └── polls/
+    │       ├── base.html
+    │       ├── index.html
+    │       ├── detail.html
+    │       └── results.html
+    ├── admin.py
+    ├── models.py
+    ├── tests.py
+    ├── urls.py
+    └── views.py
 ```
 
 ## Notes
 
 - The project uses SQLite for local development.
 - The database file is generated locally by running migrations and is not committed to the repository.
-- `DJANGO_SECRET_KEY` must be configured before running Django commands that load the settings.
 - Django Debug Toolbar is included for development and debugging.
 
 ## Learning reference
