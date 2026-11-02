@@ -169,8 +169,11 @@ class QuestionResultsViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, past_question.question_text)
-        self.assertContains(response, f'href="{reverse("polls:index")}"')
-
+        self.assertContains(
+            response,
+            f'<a href="{reverse("polls:index")}">Back to questions</a>',
+            html=True,
+        )
     def test_question_without_choices_returns_404(self):
         question = Question.objects.create(
             question_text="No choices",

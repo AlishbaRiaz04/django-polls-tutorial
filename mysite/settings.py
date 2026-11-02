@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "") == "1"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = (
     os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-development-only-key")
@@ -49,7 +49,6 @@ if DEBUG:
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -57,6 +56,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+if DEBUG:
+    MIDDLEWARE.insert(
+        1, "debug_toolbar.middleware.DebugToolbarMiddleware"
+    )
+
 
 ROOT_URLCONF = "mysite.urls"
 
